@@ -1,7 +1,6 @@
 import { Button, Navbar, TextInput } from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
 import { FaMoon, FaSearch } from "react-icons/fa";
-
 function Header() {
   const path = useLocation().pathname;
   return (
@@ -23,7 +22,7 @@ function Header() {
           <FaMoon/>
         </Button>
         <Link to='/signin'>
-          <Button gradientDuoTone="purpleToBlue">
+          <Button gradientDuoTone="purpleToBlue" outline>
             Sign-In
           </Button>
         </Link>
@@ -45,5 +44,4 @@ function Header() {
     </Navbar>
   );
 }
-
 export default Header;
