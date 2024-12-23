@@ -4,7 +4,7 @@ import { FaMoon, FaSearch } from "react-icons/fa";
 function Header() {
   const path = useLocation().pathname;
   return (
-    <Navbar className="border-b-2 border-gray-200 dark:border-gray-700">
+    <Navbar className="  dark:border-gray-700 bg-purple-600 text-white">
       <Link to={"/"}>
         <h1 className="self-center whitespace-nowrap text-xl sm:text-2xl font-bold dark:text-white">
           <span className="px-2 py-1 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 rounded-lg text-black">DEV</span>NINJAS
