@@ -40,7 +40,13 @@ function OAuth() {
   return (
     <Button
       type="button"
-      className="bg-black text-white hover:bg-white hover:text-black border border-black font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center"
+      variant="outline-primary"
+      size="sm"
+      rounded="md"
+      shadow="md"
+      fontWeight="semibold"
+      fontSize="sm"
+      className="bg-black text-gray-50 dark:bg-[rgb(16,23,42)] dark:text-white"
       onClick={handleGoogleClick}
     >
       <AiFillGoogleCircle className="w-6 h-6 mr-2" /> Sign-In with Google

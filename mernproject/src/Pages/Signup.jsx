@@ -46,7 +46,7 @@ function Signup() {
     }
   return (
      
-    <div className="min-h-screen bg-purple-400 flex items-center justify-center">
+    <div className="min-h-screen bg-purple-400 dark:bg-black flex items-center justify-center">
       <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5">
         {/* left */}
         <div className="flex-1 text-center md:text-left">
@@ -61,7 +61,7 @@ function Signup() {
         </div>
         {/* right */}
         <div className="flex-1">
-          <form className="flex flex-col gap-4 bg-purple-600 p-4 rounded-lg" onSubmit={handleSubmit}>
+          <form className="flex flex-col gap-4 bg-purple-600 dark:bg-[rgb(16,23,42)] p-4 rounded-lg" onSubmit={handleSubmit}>
             {/* username */}
             <div className="mb-2">
               <Label value="Your Username" className="font-bold"></Label>
