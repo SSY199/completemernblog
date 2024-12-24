@@ -6,16 +6,16 @@ import jwt from 'jsonwebtoken';
 export const signup = async (req, res, next) => {
   const { username, password, email } = req.body;
   if (!username || !password || !email) {
-    next(errorHandler(400, 'All fields are required'));
+    return next(errorHandler(400, 'All fields are required'));
   }
 
   const hashedPassword = bcryptjs.hashSync(password, 10);
 
   const newUser = new User({
-     username,
-      email,
-       password: hashedPassword
-       });
+    username,
+    email,
+    password: hashedPassword
+  });
 
   try {
     await newUser.save();
@@ -30,7 +30,7 @@ export const login = async (req, res, next) => {
   if (!email || !password) {
     return res.status(400).json({ message: 'Email and password are required' });
   }
-  
+
   try {
     const validUser = await User.findOne({ email: email });
     if (!validUser) {
@@ -58,34 +58,35 @@ export const login = async (req, res, next) => {
 
 export const google = async (req, res, next) => {
   const { googlePhotoUrl, name, email } = req.body;
-   try {
+  try {
     const user = await User.findOne({ email: email });
     if (user) {
-       const token = jwt.sign({ id:user._id}, process.env.JWT_SECRET );
-        const { password: pass, ...rest } = user._doc;
-        return res.status(200).cookie('access_token', token, {
-          httpOnly: true,
-    }).json(rest);
-  } 
-
-  else {
-    const generatedPassword = Math.random().toString(36).slice(-8);
-    const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
-    const newUser = new User({
-      username: name.toLowerCase().split(' ').join('')+Math.random().toString(9).slice(-5),
-      email,
-      password: hashedPassword,
-      profilePicture: googlePhotoUrl,
-    });
-    await newUser.save();
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
-    const { password: pass, ...rest } = newUser._doc;
-    return res.status(201).cookie('access_token', token, {
-      httpOnly: true,
-    }).json(rest);
-  }
-
-   } catch (error) {
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+      const { password: pass, ...rest } = user._doc;
+      return res.status(200).cookie('access_token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // Ensure secure cookies in production
+        sameSite: 'strict', // Prevent CSRF attacks
+      }).json(rest);
+    } else {
+      const generatedPassword = Math.random().toString(36).slice(-8);
+      const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
+      const newUser = new User({
+        username: name.toLowerCase().split(' ').join('') + Math.random().toString(9).slice(-5),
+        email,
+        password: hashedPassword,
+        profilePicture: googlePhotoUrl,
+      });
+      await newUser.save();
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+      const { password: pass, ...rest } = newUser._doc;
+      return res.status(201).cookie('access_token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // Ensure secure cookies in production
+        sameSite: 'strict', // Prevent CSRF attacks
+      }).json(rest);
+    }
+  } catch (error) {
     next(error);
-   }
+  }
 };
