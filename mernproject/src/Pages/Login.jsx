@@ -5,6 +5,7 @@ import { useState } from "react";
 import { signInFailure, signInStart, signInSuccess } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
+import OAuth from "../Components/OAuth";
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -85,6 +86,7 @@ function Login() {
                 )
               }
             </Button>
+            <OAuth></OAuth>
           </form>
           <div className="flex justify-center gap-3 mt-4">
             <span>Dont have an Account?</span>

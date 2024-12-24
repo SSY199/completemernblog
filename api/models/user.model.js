@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 5
   },
+  googlePhotoUrl: {
+    type: 'string',
+    default: 'https://www.vecteezy.com/vector-art/2387693-user-profile-icon'
+  },
 },
 {
   timestamps: true
