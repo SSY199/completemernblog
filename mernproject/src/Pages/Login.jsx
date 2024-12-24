@@ -2,10 +2,8 @@ import { Alert, Button, Label, Spinner } from "flowbite-react";
 import { Link, useNavigate } from "react-router-dom";
 import { TextInput } from "flowbite-react";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { signInFailure, signInStart, signInSuccess } from "../redux/user/userSlice";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
-import OAuth from "../Components/OAuth";
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -13,8 +11,8 @@ function Login() {
     password: ''
   });
   const { loading, error: errorMessage } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
@@ -23,10 +21,10 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.email || !formData.password) {
-      return dispatch(signInFailure("Please fill in all fields!"));
+      dispatch(signInFailure('All fields are required'));
     }
     try {
-       dispatch(signInStart());
+      dispatch(signInStart());
       const res = await fetch('/api/auth/login', {
         method: "POST",
         headers: {
@@ -35,16 +33,14 @@ function Login() {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-       if(!data.success) {
+      if (!res.ok) {
         dispatch(signInFailure(data.message));
-    } 
- 
-    if(res.ok) {
+        return;
+      }
       dispatch(signInSuccess(data));
       navigate("/");
-    }
-  }catch (error) {
-       dispatch(signInFailure(error.message));
+    } catch (error) {
+      dispatch(signInFailure(error.message));
     }
   };
 
@@ -58,13 +54,13 @@ function Login() {
               <span className="px-2 py-1 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 rounded-lg text-black">DEV</span>NINJAS
             </h1>
           </Link>
-          <p className="mt-4 text-lg dark:text-white">
+          <p className="mt-4 text-lg dark:text-white animate-typing">
             Welcome back to Dev-Ninjas! Sign in to access your account, read the latest articles, and engage with our community of developers.
           </p>
         </div>
         {/* right */}
         <div className="flex-1">
-          <form className="flex flex-col gap-4 bg-purple-600 dark:bg-[rgb(16,23,42)] p-4 rounded-lg" onSubmit={handleSubmit}>
+          <form className="flex flex-col gap-4 bg-purple-600 dark:bg-gray-800 p-4 rounded-lg" onSubmit={handleSubmit}>
             {/* email */}
             <div className="mb-4">
               <Label value="Your Email" className="font-bold"></Label>
@@ -86,11 +82,10 @@ function Login() {
                 )
               }
             </Button>
-            <OAuth></OAuth>
           </form>
           <div className="flex justify-center gap-3 mt-4">
             <span>Dont have an Account?</span>
-            <Link to="/signup" className="text-blue-600">Sign Up</Link>
+            <Link to="/signup" className="text-blue-600">Sign-Up</Link>
           </div>
           {
             errorMessage && (

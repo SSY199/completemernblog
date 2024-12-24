@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
   },
   googlePhotoUrl: {
     type: 'string',
-    default: 'https://www.vecteezy.com/vector-art/2387693-user-profile-icon'
+    default: ''
   },
 },
 {
