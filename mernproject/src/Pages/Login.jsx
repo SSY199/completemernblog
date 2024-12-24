@@ -2,14 +2,17 @@ import { Alert, Button, Label, Spinner } from "flowbite-react";
 import { Link, useNavigate } from "react-router-dom";
 import { TextInput } from "flowbite-react";
 import { useState } from "react";
+import { signInFailure, signInStart, signInSuccess } from "../redux/user/userSlice";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
-function Signin() {
+function Login() {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const { loading, error: errorMessage } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -19,13 +22,11 @@ function Signin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.email || !formData.password) {
-      setErrorMessage("All fields are required");
-      return;
+      return dispatch(signInFailure("Please fill in all fields!"));
     }
     try {
-      setLoading(true);
-      setErrorMessage(null);
-      const res = await fetch('/api/auth/signin', {
+       dispatch(signInStart());
+      const res = await fetch('/api/auth/login', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -33,15 +34,16 @@ function Signin() {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      if (!res.ok) {
-        setLoading(false);
-        return setErrorMessage(data.message);
-      }
-      setLoading(false);
+       if(!data.success) {
+        dispatch(signInFailure(data.message));
+    } 
+ 
+    if(res.ok) {
+      dispatch(signInSuccess(data));
       navigate("/");
-    } catch (error) {
-      setErrorMessage(error.message);
-      setLoading(false);
+    }
+  }catch (error) {
+       dispatch(signInFailure(error.message));
     }
   };
 
@@ -55,7 +57,7 @@ function Signin() {
               <span className="px-2 py-1 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 rounded-lg text-black">DEV</span>NINJAS
             </h1>
           </Link>
-          <p className="mt-4 text-lg dark:text-white animate-typing">
+          <p className="mt-4 text-lg dark:text-white">
             Welcome back to Dev-Ninjas! Sign in to access your account, read the latest articles, and engage with our community of developers.
           </p>
         </div>
@@ -86,7 +88,7 @@ function Signin() {
           </form>
           <div className="flex justify-center gap-3 mt-4">
             <span>Dont have an Account?</span>
-            <Link to="/signup" className="text-blue-600">Sign-Up</Link>
+            <Link to="/signup" className="text-blue-600">Sign Up</Link>
           </div>
           {
             errorMessage && (
@@ -99,4 +101,4 @@ function Signin() {
   );
 }
 
-export default Signin;
+export default Login;

@@ -3,7 +3,7 @@ import { Alert, Button, Label, Spinner } from "flowbite-react"
 import { Link, useNavigate } from "react-router-dom"
 import { TextInput } from "flowbite-react"
 import { useState } from "react"
-import './Signup.css';
+//import './Signup.css';
 
 function Signup() {
   const [formData, setFormData] = useState({});
@@ -90,7 +90,7 @@ function Signup() {
           </form>
           <div className="flex justify-center gap-3">
             <span>Already have an Account?</span>
-            <Link to="/signin" className="text-blue-600">Sign-In</Link>
+            <Link to="/login" className="text-blue-600">Sign-In</Link>
           </div>
           {
             errorMessage && (
