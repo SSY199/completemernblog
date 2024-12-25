@@ -57,16 +57,14 @@ export const login = async (req, res, next) => {
 };
 
 export const google = async (req, res, next) => {
-  const { googlePhotoUrl, name, email } = req.body;
+  const { name, email, googlePhotoUrl } = req.body;
   try {
-    const user = await User.findOne({ email: email });
+    const user = await User.findOne({ email });
     if (user) {
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-      const { password: pass, ...rest } = user._doc;
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET );
+      const { password, ...rest } = user._doc;
       return res.status(200).cookie('access_token', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // Ensure secure cookies in production
-        sameSite: 'strict', // Prevent CSRF attacks
       }).json(rest);
     } else {
       const generatedPassword = Math.random().toString(36).slice(-8);
@@ -77,15 +75,40 @@ export const google = async (req, res, next) => {
         password: hashedPassword,
         profilePicture: googlePhotoUrl,
       });
+      
       await newUser.save();
       const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-      const { password: pass, ...rest } = newUser._doc;
-      return res.status(201).cookie('access_token', token, {
+      const { password, ...rest } = newUser._doc;
+        res.status(201).cookie('access_token', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // Ensure secure cookies in production
-        sameSite: 'strict', // Prevent CSRF attacks
       }).json(rest);
     }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateUserProfile = async (req, res, next) => {
+  const { userId } = req.params;
+  const { username, email, profilePicture, password } = req.body;
+
+  try {
+    const updateData = { username, email, profilePicture };
+    if (password) {
+      updateData.password = bcryptjs.hashSync(password, 10);
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      updateData,
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json(updatedUser);
   } catch (error) {
     next(error);
   }
