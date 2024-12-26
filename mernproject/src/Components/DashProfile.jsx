@@ -6,6 +6,7 @@ import 'react-circular-progressbar/dist/styles.css';
 import { updateStart, updateSuccess, updateFailure, deleteUserFailure, deleteUserStart, deleteUserSuccess, signoutSuccess } from "../redux/User/userSlice";
 import {HiOutlineExclamationCircle} from 'react-icons/hi';
 import supabase from '../supabase';
+import { Link } from "react-router-dom";
 
 function DashProfile() {
   const { currentUser, error, loading } = useSelector((state) => state.user);
@@ -214,6 +215,13 @@ function DashProfile() {
         <Button type='submit' gradientDuoTone='purpleToBlue' outline disabled={loading || imageFileUploadProgress}>
           {loading ? "Loading..." : "Update"}
         </Button>
+
+            {currentUser.isAdmin && (
+              <Link to={'/createpost'}>
+              <Button type="button" gradientDuoTone='purpleToPink' className="w-full">Create a Post</Button>
+              </Link>
+            )}
+
       </form>
       <div className="text-red-600 flex justify-between mt-5">
         <span onClick={() => setShowModal(true)} className="cursor-pointer">Delete Account</span>

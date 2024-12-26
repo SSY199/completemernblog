@@ -9,6 +9,8 @@ import Signup from "./Pages/Signup";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import PrivateRoute from "./Components/PrivateRoute";
+import CreatePost from "./Pages/CreatePost";
+import OnlyAdmin from "./Components/OnlyAdmin";
 
 function App() {
   return (
@@ -20,9 +22,14 @@ function App() {
         <Route path="/projects" element={<Projects />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/dashboard" element={<PrivateRoute />}>
+        
+        <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
         </Route>
+        <Route element={<OnlyAdmin />}>
+        <Route path="/createpost" element={<CreatePost />} />
+        </Route>
+         
       </Routes>
       <Footer />
     </BrowserRouter>
