@@ -111,27 +111,42 @@ function DashProfile() {
   };
 
   const handleDeleteUser = async () => {
-    setShowModal(false);
     try {
-      dispatch(deleteUserStart());
-      const res = await fetch(`/api/users/${currentUser._id}`, {
+      dispatch(deleteUserStart()); // Start the delete process
+  
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
       });
+  
       const data = await res.json();
+  
       if (!res.ok) {
-        dispatch(deleteUserFailure(data.message));
+        // If there's an error, dispatch failure and show an alert
+        dispatch(deleteUserFailure(data.message || "Failed to delete user."));
+        alert(data.message || "An error occurred while deleting your account.");
       } else {
-        dispatch(deleteUserSuccess(data));
-        alert("User deleted successfully");
+        // Dispatch success, remove user from frontend state, and navigate
+        dispatch(deleteUserSuccess());
+        alert("Account deleted successfully.");
+        
+        // Optionally, clear any user-related data in the frontend (like local storage)
+        localStorage.clear();
+        
+        // Redirect to the home or login page
         window.location.href = "/";
       }
     } catch (error) {
+      // Catch and handle any errors
       dispatch(deleteUserFailure(error.message));
+      alert("An error occurred while deleting your account.");
+    } finally {
+      setShowModal(false); // Close the modal after the process completes
     }
   };
+  
 
   const handleSignOut = async () => {
     try {
