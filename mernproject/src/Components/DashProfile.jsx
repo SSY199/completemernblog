@@ -5,7 +5,6 @@ import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { updateStart, updateSuccess, updateFailure, deleteUserFailure, deleteUserStart, deleteUserSuccess, signoutSuccess } from "../redux/User/userSlice";
 import {HiOutlineExclamationCircle} from 'react-icons/hi';
-//import { Link } from 'react-router-dom';
 import supabase from '../supabase';
 
 function DashProfile() {
@@ -16,8 +15,9 @@ function DashProfile() {
   const [imageFileUploadProgress, setImageFileUploadProgress] = useState(null);
   const [imageFileUploadError, setImageFileUploadError] = useState(null);
   const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
-  const [updateUserError, setUpdateUserError] = useState(null); 
+  const [updateUserError, setUpdateUserError] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [formData, setFormData] = useState({
     username: currentUser.username,
     email: currentUser.email,
@@ -45,7 +45,7 @@ function DashProfile() {
 
     try {
       const fileName = new Date().getTime() + imageFile.name;
-      const {  error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('imagebucket') // Use your bucket name
         .upload(`public/${fileName}`, imageFile, {
           cacheControl: '3600',
@@ -146,11 +146,10 @@ function DashProfile() {
       setShowModal(false); // Close the modal after the process completes
     }
   };
-  
 
   const handleSignOut = async () => {
     try {
-      const res = await fetch(`/api/users/signout`, {
+      const res = await fetch(`/api/user/signout`, {
         method: 'POST',
       });
       const data = await res.json();
@@ -158,6 +157,7 @@ function DashProfile() {
         console.log(data.message);
       } else {
         dispatch(signoutSuccess());
+         
       }
     } catch (error) {
       console.log(error.message);
@@ -217,7 +217,7 @@ function DashProfile() {
       </form>
       <div className="text-red-600 flex justify-between mt-5">
         <span onClick={() => setShowModal(true)} className="cursor-pointer">Delete Account</span>
-        <span onClick={handleSignOut} className="cursor-pointer">Sign Out</span>
+        <span onClick={() => setShowSignOutModal(true)} className="cursor-pointer">Sign Out</span>
       </div>
       {updateUserSuccess && (
         <Alert color='success' className="mt-5">
@@ -243,6 +243,20 @@ function DashProfile() {
               <div className="flex justify-center gap-6">
                 <Button color='failure' onClick={handleDeleteUser}>Yes, I am sure</Button>
                 <Button color='gray' onClick={() => setShowModal(false)}>Cancel</Button>
+              </div>
+            </div>
+          </Modal.Body>
+        </Modal.Header>
+      </Modal>
+      <Modal show={showSignOutModal} onClose={() => setShowSignOutModal(false)} popup size='md'>
+        <Modal.Header>
+          <Modal.Body>
+            <div className="text-center">
+              <HiOutlineExclamationCircle className="h-14 w-14 text-gray-500 dark:text-gray-300 mb-4 mx-auto"></HiOutlineExclamationCircle>
+              <h3 className="mb-5 text-lg text-gray-600 dark:text-gray-400">Are you sure you want to sign out?</h3>
+              <div className="flex justify-center gap-6">
+                <Button color='failure' onClick={handleSignOut}>Yes, I am sure</Button>
+                <Button color='gray' onClick={() => setShowSignOutModal(false)}>Cancel</Button>
               </div>
             </div>
           </Modal.Body>
