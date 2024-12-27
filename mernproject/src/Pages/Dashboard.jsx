@@ -2,6 +2,7 @@ import  { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import DashSidebar from '../Components/DashSidebar';
 import DashProfile from '../Components/DashProfile';
+import DashPost from '../Components/DashPost';
 
 function Dashboard() {
   const [tab, setTab] = useState('profile');
@@ -24,7 +25,8 @@ function Dashboard() {
       {/* Main Content */}
       <div className="flex-1 p-4">
         {tab === 'profile' && <DashProfile />}
-        {/* Add other tab content here */}
+        {/* Posts */}
+        {tab === 'posts' && <DashPost />}
       </div>
     </div>
   );
