@@ -1,18 +1,45 @@
 import { Alert, Button, FileInput, Select, TextInput } from 'flowbite-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-function CreatePost() {
+function UpdatePost() {
+  const { currentUser } = useSelector((state) => state.user);
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [imageUploadError, setImageUploadError] = useState(null);
   const [formData, setFormData] = useState({});
   const [publishError, setPublishError] = useState(null);
+  const { postId } = useParams();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const res = await fetch(`/api/post/getposts?postId=${postId}`);
+        const data = await res.json();
+        if (!res.ok) {
+          console.log(data.message);
+          setPublishError(data.message);
+          return;
+        }
+        if(res.ok) {
+          setPublishError(null);
+          setFormData(data.posts[0]);
+
+        }
+        
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchPost();
+  }, [postId]);
 
   const handleUploadImage = async (e) => {
     try {
@@ -59,21 +86,21 @@ function CreatePost() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/post/create', {
-        method: 'POST',
+      const res = await fetch(`/api/post/updatepost/${formData._id}/${currentUser._id}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
       if (!res.ok) {
         const errorText = await res.text();
-        setPublishError(`Failed to publish post: ${errorText}`);
+        setPublishError(`Failed to update post: ${errorText}`);
         return;
       }
 
       const data = await res.json();
       setPublishError(null);
-      navigate(`/posts/${data.slug}`);
+      navigate(`/post/${data.slug}`);
     } catch (error) {
       setPublishError('An unexpected error occurred');
       console.error(error);
@@ -82,7 +109,7 @@ function CreatePost() {
 
   return (
     <div className='p-3 max-w-3xl mx-auto min-h-screen'>
-      <h1 className='text-center text-3xl my-7 font-semibold'>Create a New Post</h1>
+      <h1 className='text-center text-3xl my-7 font-semibold'>Update Post</h1>
       <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
         <div className='flex flex-col gap-4 sm:flex-row justify-between'>
           <TextInput
@@ -92,9 +119,11 @@ function CreatePost() {
             id='title'
             className='flex-1'
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            value={formData.title || ''}
           />
           <Select
             onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+            value={formData.category || ''}
           >
             <option value='uncategorized'>Select a category</option>
             <option value='programming'>Programming</option>
@@ -115,6 +144,7 @@ function CreatePost() {
             placeholder='Caption'
             className='flex-1'
             onChange={(e) => setFormData({ ...formData, caption: e.target.value })}
+            value={formData.caption || ''}
           />
           <Button type='button' gradientDuoTone='purpleToBlue' size='sm' outline disabled={imageUploadProgress}>
             {imageUploadProgress ? (
@@ -135,26 +165,27 @@ function CreatePost() {
             <img src={formData.image} alt='Uploaded' className='w-full h-72 object-cover mb-4' />
             <button
               type='button'
-              className='absolute top-0 right-0 bg-red-500 text-white rounded-full p-1'
+              className='absolute top-0 right-0 bg-red-500 text-white h-6 w-6 flex items-center justify-center'
               onClick={() => setFormData((prev) => ({
                 ...prev,
                 image: null,
               }))}
             >
-              &times;
+               x
             </button>
           </div>
         )}
 
         <ReactQuill
           theme='snow'
+          value={formData.content || ''}
           placeholder='Write your post here...'
           className='h-72 mb-12 dark:text-white'
           required
           onChange={(value) => setFormData({ ...formData, content: value })}
         />
         <Button type='submit' gradientDuoTone='purpleToPink' size='lg' className='w-full'>
-          Publish Post
+          Update Post
         </Button>
         {publishError && <Alert className='mt-5' color='failure'>{publishError}</Alert>}
       </form>
@@ -162,4 +193,4 @@ function CreatePost() {
   );
 }
 
-export default CreatePost;
+export default UpdatePost;
