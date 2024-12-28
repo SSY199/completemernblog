@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 export default function DashPost() {
   const { currentUser } = useSelector((state) => state.user);
   const [userPosts, setUserPosts] = useState([]);
+  const [showMore, setShowMore] = useState(true);
   console.log(userPosts);
 
   useEffect(() => {
@@ -15,6 +16,9 @@ export default function DashPost() {
         const data = await response.json();
         if (response.ok) {
           setUserPosts(data.posts);
+          if(data.posts.length < 9) {
+            setShowMore(false);
+          }
         }
       } catch (error) {
         console.error('Error:', error);
@@ -24,6 +28,22 @@ export default function DashPost() {
       fetchPost();
     }
   }, [currentUser._id, currentUser.isAdmin]);
+
+  const handleShowMore = async() => {
+    const startIndex = userPosts.length;
+    try {
+      const res  = await fetch(`/api/post/getposts?userId=${currentUser._id}&startIndex=${startIndex}`);
+      const data = await res.json();
+      if (res.ok) {
+        setUserPosts([...userPosts,...data.posts]);
+        if(data.posts.length < 9) {
+          setShowMore(false);
+        }
+      }
+    } catch (error) {
+      console.log(error,menubar);
+    }
+  }
 
   return (
     <div className="table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-800 dark:scrollbar-thumb-slate-600">
@@ -67,6 +87,18 @@ export default function DashPost() {
               ))}
             </Table.Body>
           </Table>
+          {
+            showMore && (
+              <div className="flex justify-center mt-5">
+                <button
+                  onClick={handleShowMore}
+                  className="text-white bg-purple-500 px-4 py-2 rounded-md shadow-sm hover:bg-purple-600"
+                >
+                  Show More
+                </button>
+              </div>
+            )
+          }
         </>
       ) : (
         <p>You have no posts yet. Create a new post by clicking on the Create Post button.</p>

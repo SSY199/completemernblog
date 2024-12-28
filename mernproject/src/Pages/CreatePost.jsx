@@ -13,7 +13,6 @@ function CreatePost() {
   const [formData, setFormData] = useState({});
   const [publishError, setPublishError] = useState(null);
   const navigate = useNavigate();
-  console.log(formData);
 
   const handleUploadImage = async (e) => {
     try {
@@ -56,6 +55,55 @@ function CreatePost() {
     }
   };
 
+  // const handleUploadImageUrl = async () => {
+  //   try {
+  //     const imageUrl = formData.imageUrl;
+  //     if (!imageUrl) {
+  //       setImageUploadError('Please enter an image URL');
+  //       return;
+  //     }
+
+  //     setImageUploadError(null);
+  //     const proxyUrl = 'https://api.allorigins.win/get?url=';
+  //     const response = await axios.get(proxyUrl + encodeURIComponent(imageUrl), { responseType: 'blob' });
+
+  //     if (response.status !== 200) {
+  //       throw new Error('Failed to fetch image from URL');
+  //     }
+
+  //     const blob = response.data;
+  //     const uploadFormData = new FormData();
+  //     uploadFormData.append('file', blob);
+  //     uploadFormData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+
+  //     const uploadResponse = await axios.post(
+  //       `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
+  //       uploadFormData,
+  //       {
+  //         onUploadProgress: (progressEvent) => {
+  //           const progress = (progressEvent.loaded / progressEvent.total) * 100;
+  //           setImageUploadProgress(progress.toFixed(0));
+  //         },
+  //       }
+  //     );
+
+  //     if (uploadResponse.status !== 200) {
+  //       throw new Error('Failed to upload image');
+  //     }
+
+  //     const data = uploadResponse.data;
+  //     setFormData((prev) => ({
+  //       ...prev,
+  //       images: [...(prev.images || []), data.secure_url], // store multiple images
+  //     }));
+  //     setImageUploadProgress(null);
+  //   } catch (error) {
+  //     setImageUploadError('An unexpected error occurred during image upload');
+  //     console.error(error);
+  //     setImageUploadProgress(null);
+  //   }
+  // };
+
   const handleDeleteImage = (index) => {
     setFormData((prev) => ({
       ...prev,
@@ -71,24 +119,21 @@ function CreatePost() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-  
+
       if (!res.ok) {
-        const errorText = await res.text(); // Read response as plain text
+        const errorText = await res.text();
         setPublishError(`Failed to publish post: ${errorText}`);
         return;
       }
-  
-      const data = await res.json(); // Parse JSON only if the response is successful
+
+      const data = await res.json();
       setPublishError(null);
-      navigate(`/post/${data.slug}`);
+      navigate(`/posts/${data.slug}`);
     } catch (error) {
       setPublishError('An unexpected error occurred');
       console.error(error);
     }
   };
-  
-  
-  
 
   return (
     <div className='p-3 max-w-3xl mx-auto min-h-screen'>
@@ -136,6 +181,24 @@ function CreatePost() {
             )}
           </Button>
         </div>
+
+        {/* <div className='flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3'>
+          <TextInput
+            type='text'
+            placeholder='Image URL'
+            className='flex-1'
+            onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+          />
+          <Button type='button' gradientDuoTone='purpleToBlue' size='sm' outline onClick={handleUploadImageUrl} disabled={imageUploadProgress}>
+            {imageUploadProgress ? (
+              <div className='w-16 h-16'>
+                <CircularProgressbar value={imageUploadProgress} text={`${imageUploadProgress}%`} />
+              </div>
+            ) : (
+              'Upload from URL'
+            )}
+          </Button>
+        </div> */}
 
         {imageUploadError && <div className='text-red-500 text-sm'>{imageUploadError}</div>}
 

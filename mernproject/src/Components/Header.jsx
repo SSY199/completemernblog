@@ -42,7 +42,7 @@ function Header() {
       </Link>
       <form className="flex items-center">
         <TextInput
-          className="hidden lg:inline"
+          className=" hidden lg:inline"
           placeholder="Search..."
           icon={FaSearch}
         />

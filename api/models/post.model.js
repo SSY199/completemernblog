@@ -21,7 +21,7 @@ const postSchema = new mongoose.Schema({
   },
   image: {
     type: String,
-    default: 'https://png.pngtree.com/png-clipart/20220222/original/pngtree-new-post-icon-giphy-instagram-png-image_7301792.png'
+    default: 'https://upload.wikimedia.org/wikipedia/en/c/ca/Post_%28South_Africa%29.gif'
   },
   category: {
     type: String,
