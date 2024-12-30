@@ -1,76 +1,111 @@
-//import React from 'react'
 import { Button, Spinner } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import CallToAction from "./CallToAction";
+import CommentSection from "./CommentSection";
 
 export default function PostPage() {
   const { postSlug } = useParams();
   const [loading, setLoading] = useState(true);
-  const [error, showError] = useState(false);
+  const [showError, setShowError] = useState(false);
   const [post, setPost] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-     const fetchPost = async () => {
+    const fetchPost = async () => {
       try {
         setLoading(true);
         const response = await fetch(`/api/post/getposts?slug=${postSlug}`);
         const data = await response.json();
         if (!response.ok) {
-          showError(true);
+          setShowError(true);
           setLoading(false);
           return;
         }
-        if (response.ok) {
-          setPost(data.posts[0]);
-          setLoading(false);
-
-          // Add post views count logic here
-
-          // Example: Update post views count
-          // const views = data.posts[0].views + 1;
-          // await fetch(`/api/post/updatepostviews/${data.posts[0]._id}`, {
-          //   method: 'PUT',
-          //   headers: {
-          //     'Content-Type': 'application/json',
-          //   },
-          //   body: JSON.stringify({ views }),
-          // });
-
-          // const updatedPost = await fetch(`/api/post/getposts?slug=${postSlug}`);
-          // const updatedData = await updatedPost.json();
-          // setPost(updatedData.posts[0]);
-        }
-      } catch (error) {
-        showError(true);
+        setPost(data.posts[0]);
+        setLoading(false);
+      } catch {
+        setShowError(true);
         setLoading(false);
       }
-     }
-     fetchPost();
+    };
+    fetchPost();
   }, [postSlug]);
 
-  if(loading) {
-    return <div className="flex justify-center items-center min-h-screen">
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
         <Spinner size="xl"></Spinner>
-    </div>
+      </div>
+    );
+  }
+
+  if (showError) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-red-600 text-lg">Error loading post. Please try again later.</p>
+      </div>
+    );
   }
 
   return (
-    <main className="p-3 flex flex-col max-w-6xl mx-auto min-h-screen">
-      <h1 className="text-3xl mt-10 p-3 text-center font-serif max-w-2xl mx-auto lg:text-4xl">{post && post.title}</h1>
-      <Link to={`/search?category=${post && post.category}`} className="self-center mt-5">
-        <Button color="gray" pill size="sm">{post && post.category}</Button>
-      </Link>
-      <img src={post && post.image} alt={post && post.title} className="mt-10 p-3 max-h-[600px] max-w-[1200px] shadow-2xl object-cover" />
-      <div className="flex justify-between p-3 border-b border-slate-600 mx-auto w-full max-w-2xl text-xs">
+    <main className="p-4 flex flex-col max-w-4xl mx-auto min-h-screen space-y-4">
+      {/* Title */}
+      <h1 className="text-2xl lg:text-3xl font-bold text-center">
+        {post?.title}
+      </h1>
+
+      {/* Category Button */}
+      <div className="flex justify-center">
+        <Link to={`/search?category=${post?.category}`}>
+          <Button color="gray" pill size="sm">
+            {post?.category}
+          </Button>
+        </Link>
+      </div>
+
+      {/* Image Section */}
+      <div className="flex justify-center">
+        <img
+          src={post?.image}
+          alt={post?.title}
+          className="cursor-pointer rounded-lg shadow-md w-full max-h-[400px] object-cover"
+          onClick={() => setIsModalOpen(true)}
+        />
+      </div>
+
+      {/* Metadata */}
+      <div className="flex justify-between text-sm text-gray-500 px-3 border-b border-gray-300">
         <span>{post && new Date(post.createdAt).toLocaleDateString()}</span>
       </div>
-      <div className="p-3 max-w-3xl mx-auto w-full post-content" dangerouslySetInnerHTML={{__html: post && post.content}}>
 
+      {/* Content */}
+      <div
+        className="prose prose-sm sm:prose lg:prose-lg mx-auto"
+        dangerouslySetInnerHTML={{ __html: post?.content }}
+      ></div>
+
+      {/* Call to Action */}
+      <div className="mt-4">
+        <CallToAction />
       </div>
-      <div className="max-w-4xl mx-auto w-full">
-        <CallToAction></CallToAction>
-      </div>
+
+      {/* Comments Section */}
+      <CommentSection postId={post?._id} />
+
+      {/* Modal for Viewing the Full Image */}
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50"
+          onClick={() => setIsModalOpen(false)}
+        >
+          <img
+            src={post?.image}
+            alt={post?.title}
+            className="max-w-full max-h-full rounded-lg shadow-lg object-contain"
+          />
+        </div>
+      )}
     </main>
-  )
+  );
 }
