@@ -43,3 +43,38 @@ export const likeComment = async (req, res, next) => {
     next(error);
   }
 };
+
+// export const editComment = async (req, res, next) => {
+//   try {
+//     const editComment = await Comment.findByIdAndUpdate(req.params.commentId, req.body, { new: true });
+//     if (!editComment) {
+//       return next(errorHandler(404, "Comment not found"));
+//     }
+//     if (comment.userId !== req.user.id && !req.user.isAdmin) {
+//       return res.status(403).json({ message: 'You cannot edit this comment' });
+//     }
+//     res.status(200).json(comment);
+//   } catch (error) {
+//     next(error);
+//   }
+// }
+
+ export const editComment = async (req, res, next) => {
+    try {
+      const comment = await Comment.findById(req.params.commentId);
+      if (!comment) {
+        return next(errorHandler(404, "Comment not found"));
+      }
+      if (comment.userId !== req.user.id && !req.user.isAdmin) {
+        return res.status(403).json({ message: 'You cannot edit this comment' });
+      }
+      const updatedComment = await Comment.findByIdAndUpdate(req.params.commentId,
+         {
+          content: req.body.content,
+         },
+          { new: true });
+      res.status(200).json(updatedComment);
+    } catch (error) {
+      next(error);
+    }
+ }
