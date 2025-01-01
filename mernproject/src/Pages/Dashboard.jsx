@@ -4,6 +4,7 @@ import DashSidebar from '../Components/DashSidebar';
 import DashProfile from '../Components/DashProfile';
 import DashPost from '../Components/DashPost';
 import DashUser from '../Components/DashUsers';
+import DashComments from '../Components/DashComments';
 
 function Dashboard() {
   const [tab, setTab] = useState('profile');
@@ -30,6 +31,8 @@ function Dashboard() {
         {tab === 'posts' && <DashPost />}
         {/* Users */}
         {tab === 'users' &&  <DashUser />}
+        {/* comments */}
+        {tab === 'comments' && <DashComments />}
       </div>
     </div>
   );
