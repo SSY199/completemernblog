@@ -1,6 +1,6 @@
 import { Avatar, Button, Dropdown, Navbar, TextInput } from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
-import { FaMoon, FaSearch, FaSun } from "react-icons/fa";
+import { FaMoon, FaSun } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { toggleTheme } from "../redux/theme/userTheme.js";
@@ -8,6 +8,7 @@ import { signoutSuccess } from "../redux/User/userSlice.js";
 import { useState } from "react";
 import { Modal } from "flowbite-react";
 import { HiOutlineExclamationCircle } from 'react-icons/hi'; 
+import { AiOutlineSearch } from "react-icons/ai";
 
 function Header() {
   const path = useLocation().pathname;
@@ -42,10 +43,14 @@ function Header() {
       </Link>
       <form className="flex items-center">
         <TextInput
+          type="text"
           className=" hidden lg:inline"
           placeholder="Search..."
-          icon={FaSearch}
+          rightIcon={AiOutlineSearch}
         />
+        <Button className='w-12 h-10 lg:hidden' color='gray' pill>
+        <AiOutlineSearch />
+      </Button>
       </form>
       <div className="flex items-center space-x-4 md:order-2">
         <Button className="w-12 h-10 hidden sm:inline" color='gray' pill onClick={() => dispatch(toggleTheme())}>
