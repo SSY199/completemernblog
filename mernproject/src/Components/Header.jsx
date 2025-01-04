@@ -4,7 +4,7 @@ import { FaMoon, FaSun } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { toggleTheme } from "../redux/theme/userTheme.js";
-import { signoutSuccess } from "../redux/User/userSlice.js";
+import { signoutSuccess } from "../redux/user/userSlice.js";
 import { useState } from "react";
 import { Modal } from "flowbite-react";
 import { HiOutlineExclamationCircle } from 'react-icons/hi'; 
