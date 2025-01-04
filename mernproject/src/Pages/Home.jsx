@@ -18,7 +18,7 @@ export default function Home() {
     <div>
       <div className='flex flex-col gap-6 p-28 px-3 max-w-6xl mx-auto '>
         <h1 className='text-3xl font-bold lg:text-6xl'>Welcome to my Blog</h1>
-        <p className='text-gray-500 text-xs sm:text-sm'>
+        <p className='text-gray-300 text-xs sm:text-sm'>
         Welcome to our blog! Here, we share insightful articles, tutorials, and stories on a variety of topics ranging from technology and programming to lifestyle and personal development. Our goal is to provide valuable content that inspires, educates, and entertains our readers. Whether you are a tech enthusiast, a budding developer, or someone looking for inspiration, you will find something of interest here. Stay tuned for regular updates and feel free to join our community by subscribing to our newsletter.
         </p>
         <Link
@@ -28,7 +28,7 @@ export default function Home() {
           View all posts
         </Link>
       </div>
-      <div className='p-3 bg-amber-100 dark:bg-slate-700'>
+      <div className='p-3 w-[1200px] ml-40 justify-center items-center'>
         <CallToAction />
       </div>
 
