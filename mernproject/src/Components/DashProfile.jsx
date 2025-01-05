@@ -4,9 +4,10 @@ import { useSelector, useDispatch } from "react-redux";
 import axios from 'axios';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import { updateStart, updateSuccess, updateFailure, deleteUserFailure, deleteUserStart, deleteUserSuccess, signoutSuccess } from "../redux/User/userSlice";
-import {HiOutlineExclamationCircle} from 'react-icons/hi';
+import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import { Link } from 'react-router-dom';
+
+import { updateStart, updateSuccess, updateFailure, deleteUserFailure, deleteUserStart, deleteUserSuccess, signoutSuccess } from "../redux/User/userSlice.js"
 
 function DashProfile() {
   const { currentUser, error, loading } = useSelector((state) => state.user);
@@ -35,6 +36,7 @@ function DashProfile() {
     if (imageFile) {
       uploadImage();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageFile]);
 
   const uploadImage = async () => {

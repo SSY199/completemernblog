@@ -11,9 +11,9 @@ import path from 'path';
 dotenv.config();
 
 mongoose
-.connect(process.env.MONGO)
-.then(() => { console.log('Connected to MongoDB') })
-.catch((err) => { console.log(err) });
+  .connect(process.env.MONGO)
+  .then(() => { console.log('Connected to MongoDB') })
+  .catch((err) => { console.log(err) });
 
 const __dirname = path.resolve();
 
@@ -32,10 +32,11 @@ app.use('/api/auth', authRoutes);
 app.use('/api/post', postRoutes);
 app.use('/api/comment', commentRoutes);
 
-app.use(express.static(path.join(__dirname, 'mernproject/dist')));
+// Serve static files from the React app built with Vite
+app.use(express.static(path.join(__dirname, 'mernblogproject/dist')));
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'mernproject', 'dist', 'index.html'));
+  res.sendFile(path.join(__dirname, 'mernblogproject', 'dist', 'index.html'));
 });
 
 app.use((err, req, res, next) => {
