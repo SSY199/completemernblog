@@ -33,10 +33,10 @@ app.use('/api/post', postRoutes);
 app.use('/api/comment', commentRoutes);
 
 // Serve static files from the React app built with Vite
-app.use(express.static(path.join(__dirname, 'mernblogproject/dist')));
+app.use(express.static(path.join(__dirname, 'mernproject/dist')));
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'mernblogproject', 'dist', 'index.html'));
+  res.sendFile(path.join(__dirname, 'mernproject', 'dist', 'index.html'));
 });
 
 app.use((err, req, res, next) => {
